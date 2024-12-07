@@ -12,13 +12,13 @@ type Report = Vec<u32>;
 #[derive(Eq, PartialEq)]
 enum Status {
     Safe,
-    Unsafe
+    Unsafe,
 }
 
 #[derive(PartialEq, Eq, Clone, Copy)]
 enum Direction {
     Up,
-    Down
+    Down,
 }
 
 fn parse_int(input: &str) -> IResult<&str, u32> {
@@ -33,44 +33,52 @@ fn parse_input(input: &str) -> IResult<&str, Vec<Report>> {
     separated_list0(line_ending, parse_report)(input)
 }
 
-fn abs_diff_ok(a:u32, b:u32) -> bool {
+fn abs_diff_ok(a: u32, b: u32) -> bool {
     a.abs_diff(b) > 0 && a.abs_diff(b) <= 3
 }
 
-fn direction_ok(direction: Direction, a:u32, b:u32) -> bool {
+fn direction_ok(direction: Direction, a: u32, b: u32) -> bool {
     match direction {
         Direction::Up if a < b => true,
         Direction::Down if a > b => true,
-        _ => false
+        _ => false,
     }
 }
 
-fn interpret_report(report: &Report) -> Status  {
-    if report.len() < 2 { return Status::Unsafe; }
+fn interpret_report(report: &Report) -> Status {
+    if report.len() < 2 {
+        return Status::Unsafe;
+    }
 
     let direction = match report[..] {
         [a, b, ..] if a < b => Direction::Up,
         [a, b, ..] if a > b => Direction::Down,
-        _ => return Status::Unsafe
+        _ => return Status::Unsafe,
     };
 
-    let is_safe = report.windows(2).all(|window| {
-        match window {
+    let is_safe = report.windows(2).all(|window| match window {
         [a, b] => direction_ok(direction, *a, *b) && abs_diff_ok(*a, *b),
-        _ => false
-        }
+        _ => false,
     });
 
-    if is_safe { Status::Safe } else { Status::Unsafe }
+    if is_safe {
+        Status::Safe
+    } else {
+        Status::Unsafe
+    }
 }
 
 fn interpret_report_with_dampen(report: &Report) -> Status {
-    if interpret_report(report) == Status::Safe { return Status::Safe }
+    if interpret_report(report) == Status::Safe {
+        return Status::Safe;
+    }
 
     for i in 0..report.len() {
         let mut reduced_report = report.clone();
         reduced_report.remove(i);
-        if interpret_report(&reduced_report) == Status::Safe { return Status::Safe }
+        if interpret_report(&reduced_report) == Status::Safe {
+            return Status::Safe;
+        }
     }
 
     Status::Unsafe

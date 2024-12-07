@@ -1,6 +1,12 @@
 use std::collections::HashMap;
 
-use nom::{character::complete::{digit1, line_ending, space1}, combinator::map_res, multi::separated_list0, sequence::separated_pair, IResult};
+use nom::{
+    character::complete::{digit1, line_ending, space1},
+    combinator::map_res,
+    multi::separated_list0,
+    sequence::separated_pair,
+    IResult,
+};
 
 advent_of_code::solution!(1);
 
@@ -23,7 +29,10 @@ pub fn part_one(input: &str) -> Option<i64> {
     left.sort();
     right.sort();
 
-    let result = left.iter().zip(right.iter()).fold(0, |acc, (a, b)| acc + (a - b).abs());
+    let result = left
+        .iter()
+        .zip(right.iter())
+        .fold(0, |acc, (a, b)| acc + (a - b).abs());
 
     Some(result)
 }
@@ -35,7 +44,9 @@ pub fn part_two(input: &str) -> Option<i64> {
         acc
     });
 
-    let result = left.iter().fold(0, |acc, a| acc + (right.get(a).unwrap_or(&{0}) * a));
+    let result = left
+        .iter()
+        .fold(0, |acc, a| acc + (right.get(a).unwrap_or(&{ 0 }) * a));
 
     Some(result)
 }
@@ -53,6 +64,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(31));
     }
 }
